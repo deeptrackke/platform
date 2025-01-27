@@ -33,7 +33,7 @@ export default function LoginPage() {
 
           {/* Description */}
           <div className="space-y-4 text-center mb-8">
-            <p className="text-gray-200">Only log in with organization email or ID..</p>
+            <p className="text-gray-200">Only log in with organization email or ID.</p>
           </div>
 
           {/* Form */}
@@ -84,6 +84,15 @@ export default function LoginPage() {
             <Button className="w-full bg-white text-black hover:bg-gray-200">Login</Button>
 
           </form>
+        </div>
+
+        {/* If no account signup */}
+
+        <div className="flex justify-between text-sm mt-4">
+          <p className="mr-1">Don&apos;t have an account?</p>
+          <Link href="/signup" className="text-customTeal hover:underline">
+            Signup
+          </Link>
         </div>
 
             <div className="flex justify-center mt-10 text-sm">
