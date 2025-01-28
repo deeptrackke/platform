@@ -42,7 +42,7 @@ export default function ResetPassword() {
     <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-4">
         {/* Back Button */}
         <div className="w-full max-w-md">
-            <Link href="/login" className="inline-flex items-center text-gray-400 hover:text-white">
+            <Link href="/forgot-password" className="inline-flex items-center text-gray-400 hover:text-white">
                 <ArrowLeft className="h-6 w-6" />
             </Link>
         </div>
@@ -91,6 +91,8 @@ export default function ResetPassword() {
           Verify Code
         </Button>
 
+        {/* TODO: when successful navigate to /change-password */}
+
         {/* Resend Email */}
         <div className="text-center text-sm">
           <span className="text-gray-400">Haven&apos;t got the email yet? </span>
@@ -98,13 +100,6 @@ export default function ResetPassword() {
             Resend email
           </Button>
         </div>
-      </div>
-
-      {/* Contact Us Link */}
-      <div className="fixed bottom-4 right-4">
-        <Link href="#" className="text-sm text-[#00C8C8] hover:underline">
-          Contact Us
-        </Link>
       </div>
     </div>
     </>

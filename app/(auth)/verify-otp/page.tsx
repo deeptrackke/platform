@@ -42,7 +42,7 @@ export default function VerifyOTP() {
             <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-4">
                 {/* Back Button */}
                 <div className="w-full max-w-md">
-                    <Link href="/login" className="inline-flex items-center text-gray-400 hover:text-white">
+                    <Link href="/signup" className="inline-flex items-center text-gray-400 hover:text-white">
                         <ArrowLeft className="h-6 w-6" />
                     </Link>
                 </div>
@@ -98,13 +98,6 @@ export default function VerifyOTP() {
                             Resend email
                         </Button>
                     </div>
-                </div>
-
-                {/* Contact Us Link */}
-                <div className="fixed bottom-4 right-4">
-                    <Link href="#" className="text-sm text-[#00C8C8] hover:underline">
-                        Contact Us
-                    </Link>
                 </div>
             </div>
         </>

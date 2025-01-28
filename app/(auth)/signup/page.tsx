@@ -80,7 +80,7 @@ export default function SignUpPage() {
             </button>
           </div>
 
-          <div className="flex gap-2">
+          {/* <div className="flex gap-2">
             <Input
               type="text"
               placeholder="#Code"
@@ -89,7 +89,7 @@ export default function SignUpPage() {
             <Button variant="outline" className="border-gray-800 text-white bg-transparent">
               Send code
             </Button>
-          </div>
+          </div> */}
 
           <div className="flex items-center space-x-2">
             <Checkbox
@@ -108,7 +108,7 @@ export default function SignUpPage() {
               .
             </label>
           </div>
-
+            {/* TODO: navigate to verify OTP /verify-otp */}
           <Button className="w-full bg-white text-black hover:bg-gray-200">Sign up</Button>
 
           <div className="flex justify-between text-sm">

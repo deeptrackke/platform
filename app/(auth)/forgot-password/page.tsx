@@ -46,7 +46,7 @@ export default function ForgotPassword() {
                             className="pl-10 pr-10 py-2 w-full bg-transparent border border-gray-800 rounded-md text-white placeholder:text-gray-500"
                         />
                     </div>
-
+                        {/* TODO: navigate to verify code which is /reset-password */}
                     <Button className="w-full bg-white text-black hover:bg-gray-200">Reset Password</Button>
 
                     <div className="text-center">

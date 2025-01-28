@@ -22,7 +22,7 @@ export default function NewPassword() {
         <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-4">
             {/* Back Button */}
             <div className="w-full max-w-md">
-                <Link href="/verify-code" className="inline-flex items-center text-gray-400 hover:text-white">
+                <Link href="/reset-password" className="inline-flex items-center text-gray-400 hover:text-white">
                     <ArrowLeft className="h-6 w-6" />
                 </Link>
             </div>
