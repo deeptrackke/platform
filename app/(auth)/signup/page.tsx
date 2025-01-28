@@ -112,7 +112,7 @@ export default function SignUpPage() {
           <Button className="w-full bg-white text-black hover:bg-gray-200">Sign up</Button>
 
           <div className="flex justify-between text-sm">
-            <Link href="#" className="text-gray-400 hover:text-white">
+            <Link href="/forgot-password" className="text-gray-400 hover:text-white">
               Forgot password?
             </Link>
             <Link href="/login" className="text-gray-400 hover:text-white">
