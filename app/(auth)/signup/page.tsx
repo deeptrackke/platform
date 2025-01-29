@@ -55,7 +55,7 @@ export default function SignUpPage() {
     onSubmit: async (values) => {
       setLoading(true);
       try {
-        const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/signup`, {
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/signup`, {
           email: values.email,
           password: values.password,
           name: values.name,
@@ -64,6 +64,7 @@ export default function SignUpPage() {
         });
 
         if (response.data.data.message === "Profile Created Successfully! Verify OTP !") {
+          localStorage.setItem("email", values.email); //store email in local storage
           toast.success("Profile Created Successfully! Verify OTP !");
           router.push("/verify-otp");
         }
@@ -242,10 +243,10 @@ export default function SignUpPage() {
           </Button>
 
           <div className="flex justify-between text-sm">
-            <Link href="/forgot-password" className="text-gray-400 hover:text-white">
+            <Link href="/forgot-password" className="text-customTeal hover:underline">
               Forgot password?
             </Link>
-            <Link href="/login" className="text-gray-400 hover:text-white">
+            <Link href="/login" className="text-customTeal hover:underline">
               Log in
             </Link>
           </div>

@@ -6,10 +6,17 @@ import { Input } from "@/components/ui/input"
 import { ArrowLeft } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
+import axios from "axios"
+import { useRouter } from "next/navigation"
+import toast, { Toaster } from "react-hot-toast"
+import { Circles } from "react-loader-spinner"
 
 export default function VerifyOTP() {
-    const [code, setCode] = useState(["", "", "", "", ""])
+    const [code, setCode] = useState(["", "", "", "", "",""])
+    const [loading, setLoading] = useState(false)
+    const router = useRouter()
     const inputRefs = [
+        useRef<HTMLInputElement>(null),
         useRef<HTMLInputElement>(null),
         useRef<HTMLInputElement>(null),
         useRef<HTMLInputElement>(null),
@@ -24,7 +31,7 @@ export default function VerifyOTP() {
             setCode(newCode)
 
             // Auto-focus next input
-            if (value.length === 1 && index < 4) {
+            if (value.length === 1 && index < 5) {
                 inputRefs[index + 1].current?.focus()
             }
         }
@@ -36,10 +43,44 @@ export default function VerifyOTP() {
         }
     }
 
+    const handleVerifyOTP = async () => {
+        const otp = code.join("")
+        const email = localStorage.getItem("email") // Assuming you stored the email in localStorage after signup
+
+        if (!email) {
+            toast.error("Email not found. Please sign up again.")
+            return
+        }
+
+        setLoading(true)
+        try {
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/verify-otp`, {
+                email,
+                otp,
+            })
+
+            if (response.data.success) {
+                toast.success("OTP verified successfully!")
+                router.push("/success-screen")
+            } else {
+                console.error("OTP verification failed:", response.data.message)
+                toast.error("Invalid OTP. Please try again.")
+            }
+        } catch (error: unknown) {
+            if (axios.isAxiosError(error)) {
+                toast.error(error.response?.data?.message || "An error occurred during OTP verification")
+            } else {
+                toast.error("An unexpected error occurred")
+            }
+        } finally {
+            setLoading(false)
+        }
+    }
+
     return (
         <>
-
             <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-4">
+                <Toaster />
                 {/* Back Button */}
                 <div className="w-full max-w-md">
                     <Link href="/signup" className="inline-flex items-center text-gray-400 hover:text-white">
@@ -64,7 +105,7 @@ export default function VerifyOTP() {
 
                     {/* Description */}
                     <p className="text-center text-gray-400">
-                        We sent an OTP to your email. Please enter the unique 5 digit code.
+                        We sent an OTP to your email. Please enter the unique 6 digit code.
                     </p>
 
                     {/* Verification Code Inputs */}
@@ -86,9 +127,10 @@ export default function VerifyOTP() {
                     {/* Verify Button */}
                     <Button
                         className="w-full bg-gray-700 text-white hover:bg-gray-600"
-                        disabled={!code.every((digit) => digit.length === 1)}
+                        disabled={!code.every((digit) => digit.length === 1) || loading}
+                        onClick={handleVerifyOTP}
                     >
-                        Verify OTP
+                        {loading ? <Circles height={24} width={24} color="#000" /> : "Verify OTP"}
                     </Button>
 
                     {/* Resend Email */}
