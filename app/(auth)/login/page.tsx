@@ -42,10 +42,10 @@ export default function LoginForm() {
         const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, values)
 
         // check if login was successful
-        if (response.data.access_token && response.data.refresh_token) {
+        if (response.data.accessToken && response.data.refreshToken) {
             // save tokens in local storage
-            localStorage.setItem("access_token", response.data.access_token)
-            localStorage.setItem("refresh_token", response.data.refresh_token)
+          localStorage.setItem("access_token", response.data.accessToken)
+          localStorage.setItem("refresh_token", response.data.refreshToken)
 
             // redirect user to dashboard
             toast.success("Login successful")
