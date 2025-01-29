@@ -20,9 +20,7 @@ const secretKey = process.env.SESSION_SECRET_KEY!;
 const encodedKey = new TextEncoder().encode(secretKey);
 
 export async function createSession(payload: Session) {
-  const expiredAt = new Date(
-    Date.now() + 7 * 24 * 60 * 60 * 1000
-  );
+  const expiredAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
   const session = await new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
@@ -30,17 +28,21 @@ export async function createSession(payload: Session) {
     .setExpirationTime("7d")
     .sign(encodedKey);
 
-  (await cookies()).set("session", session, {
-    httpOnly: true,
-    secure: true,
-    expires: expiredAt,
-    sameSite: "lax",
-    path: "/dashboard",
-  });
+  // In createSession function, update cookie settings:
+(await cookies()).set("session", session, {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  expires: expiredAt,
+  sameSite: "lax",
+  path: "/", // Update this from "/dashboard" to "/"
+});
 }
 
 export async function getSession() {
   const cookie = (await cookies()).get("session")?.value;
+
+    console.log("session Cookie ===========>", cookie);
+
   if (!cookie) return null;
 
   try {
@@ -52,15 +54,18 @@ export async function getSession() {
       }
     );
 
+    console.log("Decoded Session Payload:==================>", payload); // Debugging
+
     return payload as Session;
   } catch (err) {
-    console.error("Failed to verify the session", err);
+    console.error("Failed to verify the session==============>", err);
     redirect("/login");
   }
 }
 
 export async function deleteSession() {
-  (await cookies()).delete("session");
+    (await cookies()).delete("session");
+    console.log("Session cookie deleted===========>");
 }
 
 export async function updateTokens({

@@ -14,6 +14,7 @@ import { useFormik } from "formik"
 import * as Yup from "yup"
 import axios from "axios"
 import { Circles } from "react-loader-spinner"
+import { createSession } from "@/lib/session"
 
 interface FormValues {
   email: string;
@@ -51,13 +52,19 @@ export default function Login() {
 
         // check if login was successful
         if (response.data.accessToken && response.data.refreshToken) {
-            // save tokens in local storage
-          localStorage.setItem("access_token", response.data.accessToken)
-          localStorage.setItem("refresh_token", response.data.refreshToken)
+          // Create server session
+          await createSession({
+            user: response.data.user, // Ensure your API returns user data
+            accessToken: response.data.accessToken,
+            refreshToken: response.data.refreshToken
+          });
 
-            // redirect user to dashboard
-            toast.success("Login successful")
-            router.push("/dashboard")
+          // Store tokens in localStorage for client-side usage (if needed)
+          localStorage.setItem("access_token", response.data.accessToken);
+          localStorage.setItem("refresh_token", response.data.refreshToken);
+
+          router.push("/dashboard");
+          router.refresh(); // Add this to ensure middleware revalidation
         } else {
             toast.error("Login failed. Please check your credentials.")
         }
@@ -202,48 +209,33 @@ export default function Login() {
 };
 
 // implement refreshToken
-export const refreshToken = async (
-  oldRefreshToken: string
-) => {
+export const refreshToken = async (oldRefreshToken: string): Promise<string | null> => {
   try {
-    const response = await fetch(
+    const response = await axios.post(
       `${process.env.NEXT_PUBLIC_API_URL}/auth/refresh-token`,
+      { refresh: oldRefreshToken },
       {
-        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          refresh: oldRefreshToken,
-        }),
       }
     );
 
-    if (!response.ok) {
-      throw new Error(
-        "Failed to refresh token" + response.statusText
-      );
-    }
+    const { accessToken, refreshToken } = response.data;
 
-    const { accessToken, refreshToken } =
-      await response.json();
-    // update session with new tokens
-    const updateRes = await fetch(
-      `${process.env.NEXT_PUBLIC_URL}/auth/update-token`,
-      {
-        method: "POST",
-        body: JSON.stringify({
-          accessToken,
-          refreshToken,
-        }),
-      }
-    );
-    if (!updateRes.ok)
-      throw new Error("Failed to update the tokens");
+    // Update local storage with new tokens
+    localStorage.setItem("access_token", accessToken);
+    localStorage.setItem("refresh_token", refreshToken);
+
+    // Optionally, send updated tokens to the backend session manager
+    await axios.post(`${process.env.NEXT_PUBLIC_URL}/auth/update-token`, {
+      accessToken,
+      refreshToken,
+    });
 
     return accessToken;
-  } catch (err) {
-    console.error("Refresh Token failed:", err);
+  } catch (error) {
+    console.error("Token refresh failed:", error);
     return null;
   }
 };
