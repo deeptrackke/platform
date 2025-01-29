@@ -15,17 +15,24 @@ import * as Yup from "yup"
 import axios from "axios"
 import { Circles } from "react-loader-spinner"
 
-export default function LoginForm() {
+interface FormValues {
+  email: string;
+  password: string;
+  terms: boolean;
+}
+
+export default function Login() {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
 
   // formik setup
 
-  const formik = useFormik({
+  const formik = useFormik<FormValues>({
     initialValues: {
       email: "",
       password: "",
+      terms: false
     },
     validationSchema: Yup.object({
       email: Yup.string()
@@ -34,6 +41,7 @@ export default function LoginForm() {
         password: Yup.string()
         .min(6, "Password must be at least 6 characters")
         .required("Password is required"),
+      terms: Yup.boolean().oneOf([true], "You must accept the terms and conditions"),
     }),
     onSubmit: async (values) => {
       setLoading(true)
@@ -133,6 +141,10 @@ export default function LoginForm() {
             <Checkbox
               id="terms"
               className="border-gray-600 data-[state=checked]:bg-white data-[state=checked]:text-black"
+              name="terms"
+              onCheckedChange={(checked) => formik.setFieldValue("terms", checked)}
+              onBlur={formik.handleBlur}
+              checked={formik.values.terms}
             />
             <label htmlFor="terms" className="text-sm text-gray-300">
               I confirm that i have read, sent and agreed to Deeptrack&apos;s{" "}
@@ -145,6 +157,9 @@ export default function LoginForm() {
               </Link>
               .
             </label>
+            {formik.touched.terms && formik.errors.terms ? (
+              <div className="text-red-500 text-sm">{formik.errors.terms}</div>
+            ) : null}
           </div>
 
           <Button className="w-full bg-white text-black hover:bg-gray-200">
@@ -184,5 +199,51 @@ export default function LoginForm() {
       </div>
     </div>
   )
-}
+};
 
+// implement refreshToken
+export const refreshToken = async (
+  oldRefreshToken: string
+) => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/auth/refresh-token`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          refresh: oldRefreshToken,
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        "Failed to refresh token" + response.statusText
+      );
+    }
+
+    const { accessToken, refreshToken } =
+      await response.json();
+    // update session with new tokens
+    const updateRes = await fetch(
+      `${process.env.NEXT_PUBLIC_URL}/auth/update-token`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          accessToken,
+          refreshToken,
+        }),
+      }
+    );
+    if (!updateRes.ok)
+      throw new Error("Failed to update the tokens");
+
+    return accessToken;
+  } catch (err) {
+    console.error("Refresh Token failed:", err);
+    return null;
+  }
+};

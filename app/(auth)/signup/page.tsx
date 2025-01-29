@@ -19,7 +19,7 @@ interface FormValues {
   email: string;
   password: string;
   confirmPassword: string;
-  // terms: boolean;
+  terms: boolean;
   name: string;
   phone: string;
   industry: string;
@@ -36,7 +36,7 @@ export default function SignUpPage() {
       email: "",
       password: "",
       confirmPassword: "",
-      // terms: false,
+      terms: false,
       name: "",
       phone: "",
       industry: "",
@@ -47,7 +47,7 @@ export default function SignUpPage() {
       confirmPassword: Yup.string()
         .oneOf([Yup.ref("password")], "Passwords must match")
         .required("Required"),
-      // terms: Yup.boolean().oneOf([true], "You must accept the terms and conditions"),
+      terms: Yup.boolean().oneOf([true], "You must accept the terms and conditions"),
       name: Yup.string().required("Organization name is required"),
       phone: Yup.string().required("Phone number required"),
       industry: Yup.string().required("Industry is required"),
@@ -216,11 +216,11 @@ export default function SignUpPage() {
           <div className="flex items-center space-x-2">
             <Checkbox
               id="terms"
-              name="terms"
               className="border-gray-600 data-[state=checked]:bg-white data-[state=checked]:text-black"
-              // onChange={formik.handleChange}
-              // onBlur={formik.handleBlur}
-              // checked={formik.values.terms}
+              name="terms"
+              onCheckedChange={(checked) => formik.setFieldValue("terms", checked)}
+              onBlur={formik.handleBlur}
+              checked={formik.values.terms}
             />
             <label htmlFor="terms" className="text-sm text-gray-300">
               I confirm that I have read, sent, and agreed to Deeptrack&apos;s {" "}
@@ -233,9 +233,9 @@ export default function SignUpPage() {
               </Link>
               .
             </label>
-            {/* {formik.touched.terms && formik.errors.terms ? (
+            {formik.touched.terms && formik.errors.terms ? (
               <div className="text-red-500 text-sm">{formik.errors.terms}</div>
-            ) : null} */}
+            ) : null}
           </div>
 
           <Button type="submit" className="w-full bg-white text-black hover:bg-gray-200">
