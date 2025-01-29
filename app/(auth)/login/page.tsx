@@ -14,18 +14,26 @@ import { useFormik } from "formik"
 import * as Yup from "yup"
 import axios from "axios"
 import { Circles } from "react-loader-spinner"
+import { createSession } from "@/lib/session"
 
-export default function LoginForm() {
+interface FormValues {
+  email: string;
+  password: string;
+  terms: boolean;
+}
+
+export default function Login() {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
 
   // formik setup
 
-  const formik = useFormik({
+  const formik = useFormik<FormValues>({
     initialValues: {
       email: "",
       password: "",
+      terms: false
     },
     validationSchema: Yup.object({
       email: Yup.string()
@@ -34,6 +42,7 @@ export default function LoginForm() {
         password: Yup.string()
         .min(6, "Password must be at least 6 characters")
         .required("Password is required"),
+      terms: Yup.boolean().oneOf([true], "You must accept the terms and conditions"),
     }),
     onSubmit: async (values) => {
       setLoading(true)
@@ -43,13 +52,19 @@ export default function LoginForm() {
 
         // check if login was successful
         if (response.data.accessToken && response.data.refreshToken) {
-            // save tokens in local storage
-          localStorage.setItem("access_token", response.data.accessToken)
-          localStorage.setItem("refresh_token", response.data.refreshToken)
+          // Create server session
+          await createSession({
+            user: response.data.user, // Ensure your API returns user data
+            accessToken: response.data.accessToken,
+            refreshToken: response.data.refreshToken
+          });
 
-            // redirect user to dashboard
-            toast.success("Login successful")
-            router.push("/dashboard")
+          // Store tokens in localStorage for client-side usage (if needed)
+          localStorage.setItem("access_token", response.data.accessToken);
+          localStorage.setItem("refresh_token", response.data.refreshToken);
+
+          router.push("/dashboard");
+          router.refresh(); // Add this to ensure middleware revalidation
         } else {
             toast.error("Login failed. Please check your credentials.")
         }
@@ -133,6 +148,10 @@ export default function LoginForm() {
             <Checkbox
               id="terms"
               className="border-gray-600 data-[state=checked]:bg-white data-[state=checked]:text-black"
+              name="terms"
+              onCheckedChange={(checked) => formik.setFieldValue("terms", checked)}
+              onBlur={formik.handleBlur}
+              checked={formik.values.terms}
             />
             <label htmlFor="terms" className="text-sm text-gray-300">
               I confirm that i have read, sent and agreed to Deeptrack&apos;s{" "}
@@ -145,6 +164,9 @@ export default function LoginForm() {
               </Link>
               .
             </label>
+            {formik.touched.terms && formik.errors.terms ? (
+              <div className="text-red-500 text-sm">{formik.errors.terms}</div>
+            ) : null}
           </div>
 
           <Button className="w-full bg-white text-black hover:bg-gray-200">
@@ -184,5 +206,36 @@ export default function LoginForm() {
       </div>
     </div>
   )
-}
+};
 
+// implement refreshToken
+export const refreshToken = async (oldRefreshToken: string): Promise<string | null> => {
+  try {
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/auth/refresh-token`,
+      { refresh: oldRefreshToken },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const { accessToken, refreshToken } = response.data;
+
+    // Update local storage with new tokens
+    localStorage.setItem("access_token", accessToken);
+    localStorage.setItem("refresh_token", refreshToken);
+
+    // Optionally, send updated tokens to the backend session manager
+    await axios.post(`${process.env.NEXT_PUBLIC_URL}/auth/update-token`, {
+      accessToken,
+      refreshToken,
+    });
+
+    return accessToken;
+  } catch (error) {
+    console.error("Token refresh failed:", error);
+    return null;
+  }
+};
