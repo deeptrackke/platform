@@ -55,6 +55,7 @@ export default function SignUpPage() {
     onSubmit: async (values) => {
       setLoading(true);
       try {
+        console.log("Submitting form...=============>");
         const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/signup`, {
           email: values.email,
           password: values.password,
@@ -63,12 +64,16 @@ export default function SignUpPage() {
           industry: values.industry,
         });
 
-        if (response.data.data.message === "Profile Created Successfully! Verify OTP !") {
+        console.log("API Response:", response.data);
+
+        if (response.status === 201) {
+          console.log("Storing email in local storage...");
           localStorage.setItem("email", values.email); //store email in local storage
           toast.success("Profile Created Successfully! Verify OTP !");
           router.push("/verify-otp");
         }
       } catch (error: unknown) {
+        console.error("Error during signup:", error);
         if (axios.isAxiosError(error)) {
           toast.error(error.response?.data?.email?.error || "An error occurred during signup");
         } else {

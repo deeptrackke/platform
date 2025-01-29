@@ -13,12 +13,8 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { getSession } from "@/lib/session";
 
-export default async function Page() {
-
-  const session = await getSession();
-  console.log("SESSSSSIONNNN====>", session)
+export default function Page() {
 
   return (
     <SidebarProvider>
