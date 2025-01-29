@@ -41,8 +41,6 @@ export async function createSession(payload: Session) {
 export async function getSession() {
   const cookie = (await cookies()).get("session")?.value;
 
-    console.log("session Cookie ===========>", cookie);
-
   if (!cookie) return null;
 
   try {
@@ -54,18 +52,15 @@ export async function getSession() {
       }
     );
 
-    console.log("Decoded Session Payload:==================>", payload); // Debugging
-
     return payload as Session;
   } catch (err) {
-    console.error("Failed to verify the session==============>", err);
+    console.error("Failed to verify the session", err);
     redirect("/login");
   }
 }
 
 export async function deleteSession() {
     (await cookies()).delete("session");
-    console.log("Session cookie deleted===========>");
 }
 
 export async function updateTokens({

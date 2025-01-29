@@ -5,6 +5,7 @@ import {
   Book,
   CreditCard,
   Home,
+  Loader2,
   LucideLogOut,
   Settings2,
   User2,
@@ -23,6 +24,8 @@ import {
 } from "@/components/ui/sidebar"
 import Image from "next/image"
 import { Button } from "./ui/button"
+import toast, { Toaster } from "react-hot-toast"
+import { useState } from "react"
 
 // This is sample data.
 const data = {
@@ -59,7 +62,47 @@ const data = {
       icon: Settings2,
     },
   ],
-  projects: [
+}
+
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+
+  const [isSigningOut, setIsSigningOut] = useState(false)
+
+  const handleSignOut = async () => {
+    setIsSigningOut(true)
+    try {
+      const response = await fetch('/api/auth/signout', {
+        method: 'POST'
+      });
+
+      if (response.ok) {
+        // Clear client-side tokens
+        localStorage.removeItem('access_token')
+        localStorage.removeItem('refresh_token')
+
+        // Show success toast
+        toast.success('Signed out successfully!', {
+          duration: 2000,
+          position: 'bottom-center'
+        })
+
+        // Wait for toast to show before redirecting
+        setTimeout(() => {
+          window.location.href = '/login'
+        }, 2000)
+      } else {
+        const errorData = await response.json()
+        toast.error(errorData.error || 'Sign out failed')
+      }
+    } catch (error) {
+      console.error('Signout error:', error)
+      toast.error('An error occurred during sign out')
+    } finally {
+      setIsSigningOut(false)
+    }
+  }
+
+  const projects = [
     {
       name: "Profile",
       url: "#",
@@ -67,14 +110,15 @@ const data = {
     },
     {
       name: "Sign Out",
-      url: "#",
-      icon: LucideLogOut,
+      icon: isSigningOut ? Loader2 : LucideLogOut,
+      onClick: handleSignOut,
+      disabled: isSigningOut,
     },
-  ],
-}
+  ]
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
+    <>
+    <Toaster />
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader className="border-b">
         <Image 
@@ -87,7 +131,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+        <NavProjects projects={projects} />
       </SidebarContent>
       <SidebarFooter>
         {/* <NavUser user={data.user} /> */}
@@ -119,5 +163,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
+    </>
   )
 }
