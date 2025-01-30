@@ -64,10 +64,11 @@ export default function Login() {
           localStorage.setItem("refresh_token", response.data.refreshToken);
 
           router.push("/dashboard");
-          router.refresh(); // Add this to ensure middleware revalidation
+          router.refresh(); 
         } else {
             toast.error("Login failed. Please check your credentials.")
         }
+        
       } catch(error: unknown) {
         if (axios.isAxiosError(error)) {
             toast.error(error.response?.data.message || "An error occurred. Please try again.")
