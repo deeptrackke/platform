@@ -1,126 +1,56 @@
-"use client"
+import { Book, Database, Home,Search, Settings, User2 } from "lucide-react"
 
-import * as React from "react"
-import {
-  Book,
-  CreditCard,
-  Home,
-  Loader2,
-  LucideLogOut,
-  Settings2,
-  User2,
-  Wrench,
-} from "lucide-react"
-
-import { NavMain } from "@/components/nav-main"
-import { NavProjects } from "@/components/nav-projects"
-import { NavUser } from "@/components/nav-user"
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
   SidebarHeader,
-  SidebarRail,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import Image from "next/image"
-// import { Button } from "./ui/button"
-import toast, { Toaster } from "react-hot-toast"
-import { useState } from "react"
 
-// This is sample data.
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+const items = [
+  {
+    title: "Home",
+    url: "/dashboard",
+    icon: Home,
   },
-  navMain: [
-    {
-      title: "Dashboard",
-      url: "/dashboard",
-      icon: Home,
-      isActive: true,
-    },
-    {
-      title: "Docs",
-      url: "#",
-      icon: Book,
-    },
-    {
-      title: "API Reference",
-      url: "#",
-      icon: Wrench,
-    },
-    {
-      title: "Billing",
-      url: "#",
-      icon: CreditCard,
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-    },
-  ],
-}
+  {
+    title: "Insights",
+    url: "/insights",
+    icon: Database,
+  },
+  {
+    title: "Docs",
+    url: "https://deeptrack.ai/docs",
+    icon: Book,
+  },
+  {
+    title: "Verifications",
+    url: "#",
+    icon: Search,
+  },
+  {
+    title: "Settings",
+    url: "#",
+    icon: Settings,
+  },
+  {
+    title: "Organization",
+    url: "#",
+    icon: User2,
+  },
+]
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-
-  const [isSigningOut, setIsSigningOut] = useState(false)
-
-  const handleSignOut = async () => {
-    setIsSigningOut(true)
-    try {
-      const response = await fetch('/api/auth/signout', {
-        method: 'POST'
-      });
-
-      if (response.ok) {
-        // Clear client-side tokens
-        localStorage.removeItem('access_token')
-        localStorage.removeItem('refresh_token')
-
-        // Show success toast
-        toast.success('Signed out successfully!', {
-          duration: 2000,
-          position: 'bottom-center'
-        })
-
-        // Wait for toast to show before redirecting
-        setTimeout(() => {
-          window.location.href = '/login'
-        }, 2000)
-      } else {
-        const errorData = await response.json()
-        toast.error(errorData.error || 'Sign out failed')
-      }
-    } catch (error) {
-      console.error('Signout error:', error)
-      toast.error('An error occurred during sign out')
-    } finally {
-      setIsSigningOut(false)
-    }
-  }
-
-  const projects = [
-    {
-      name: "Profile",
-      url: "#",
-      icon: User2,
-    },
-    {
-      name: "Sign Out",
-      icon: isSigningOut ? Loader2 : LucideLogOut,
-      onClick: handleSignOut,
-      disabled: isSigningOut,
-    },
-  ]
-
+export function AppSidebar() {
   return (
-    <>
-    <Toaster />
-    <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader className="border-b">
+    <Sidebar>
+      <SidebarContent>
+        <SidebarGroup>
+        <SidebarHeader className="border-b">
         <Image 
           src='/deeptrack-logo.png'
           alt='DeepTrack logo'
@@ -129,15 +59,23 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           className="mt-2 p-2 border-b-slate-600"
         />
       </SidebarHeader>
-      <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavProjects projects={projects} />
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {items.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <a href={item.url}>
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+         
+        </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter>
-      <SidebarRail />
     </Sidebar>
-    </>
   )
 }
