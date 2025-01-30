@@ -1,37 +1,15 @@
 "use client"
 
-import {
-  BadgeCheck,
-  Bell,
-  ChevronsUpDown,
-  CreditCard,
-  LogOut,
-  Sparkles,
-} from "lucide-react"
-
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+import Image from "next/image"
+// import { Button } from "@/components/ui/button"
 import {
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
 
 export function NavUser({
-  user,
+  // user,
 }: {
   user: {
     name: string
@@ -39,76 +17,40 @@ export function NavUser({
     avatar: string
   }
 }) {
-  const { isMobile } = useSidebar()
-
+  const {isMobile} = useSidebar();
+  
   return (
     <SidebarMenu>
+      {!isMobile && (
       <SidebarMenuItem>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <SidebarMenuButton
-              size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-            >
-              <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
-              </Avatar>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">{user.name}</span>
-                <span className="truncate text-xs">{user.email}</span>
+        <div className="rounded-lg bg-black p-4 relative">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center">
+              <Image src="/deeptrack-logo.png" width={100} height={100} alt="logo" />
+              {/* <div className="ml-1 flex space-x-[2px]">
+                <div className="w-[3px] h-4 bg-foreground"></div>
+                <div className="w-[3px] h-4 bg-foreground"></div>
+                <div className="w-[3px] h-4 bg-foreground"></div>
+              </div> */}
+            </div>
+            {/* <div className="bg-white rounded-full p-1.5">
+              <div className="w-5 h-5 flex items-center justify-center">
+                <span className="text-black text-lg">?</span>
               </div>
-              <ChevronsUpDown className="ml-auto size-4" />
-            </SidebarMenuButton>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-            side={isMobile ? "bottom" : "right"}
-            align="end"
-            sideOffset={4}
+            </div> */}
+          </div>
+          {/* <h3 className="font-semibold mb-1">Need help?</h3>
+          <p className="text-sm text-muted-foreground mb-3">Please check our docs</p> */}
+          {/* <Button
+            className="w-full bg-muted-foreground/10 hover:bg-muted-foreground/20 hover:text-white text-white"
+            variant="ghost"
           >
-            <DropdownMenuLabel className="p-0 font-normal">
-              <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
-                </Avatar>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">{user.name}</span>
-                  <span className="truncate text-xs">{user.email}</span>
-                </div>
-              </div>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Sparkles />
-                Upgrade to Pro
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCard />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell />
-                Notifications
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <LogOut />
-              Log out
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+            DOCUMENTATION
+          </Button> */}
+        </div>
       </SidebarMenuItem>
+      )}
+      {/* Additional content below */}
     </SidebarMenu>
   )
 }
