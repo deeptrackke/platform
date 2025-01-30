@@ -14,7 +14,7 @@ import {
 
 import { NavMain } from "@/components/nav-main"
 import { NavProjects } from "@/components/nav-projects"
-// import { NavUser } from "@/components/nav-user"
+import { NavUser } from "@/components/nav-user"
 import {
   Sidebar,
   SidebarContent,
@@ -23,7 +23,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 import Image from "next/image"
-import { Button } from "./ui/button"
+// import { Button } from "./ui/button"
 import toast, { Toaster } from "react-hot-toast"
 import { useState } from "react"
 
@@ -134,32 +134,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavProjects projects={projects} />
       </SidebarContent>
       <SidebarFooter>
-        {/* <NavUser user={data.user} /> */}
-          <div className="rounded-lg bg-black p-4 relative">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center">
-                <Image src='/deeptrack-logo.png' width={100} height={100} alt={"logo"} />
-                <div className="ml-1 flex space-x-[2px]">
-                  <div className="w-[3px] h-4 bg-foreground"></div>
-                  <div className="w-[3px] h-4 bg-foreground"></div>
-                  <div className="w-[3px] h-4 bg-foreground"></div>
-                </div>
-              </div>
-              <div className="bg-white rounded-full p-1.5">
-                <div className="w-5 h-5 flex items-center justify-center">
-                  <span className="text-black text-lg">?</span>
-                </div>
-              </div>
-            </div>
-            <h3 className="font-semibold mb-1">Need help?</h3>
-            <p className="text-sm text-muted-foreground mb-3">Please check our docs</p>
-            <Button
-              className="w-full bg-muted-foreground/10 hover:bg-muted-foreground/20 hover:text-white text-white"
-              variant="ghost"
-            >
-              DOCUMENTATION
-            </Button>
-          </div>
+        <NavUser user={data.user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

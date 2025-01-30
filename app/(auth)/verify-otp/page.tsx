@@ -59,7 +59,7 @@ export default function VerifyOTP() {
                 otp,
             })
 
-            if (response.data.success) {
+            if (response.data.statusCode === 200) {
                 toast.success("OTP verified successfully!")
                 router.push("/success-screen")
             } else {

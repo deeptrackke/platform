@@ -13,12 +13,11 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { getSession } from "@/lib/session";
+import { MetricsGrid } from "../_components/metrics-grid"
+import { ConversionChart } from "../_components/conversion-chart"
+import ApiKeyGenerator from "../_components/apiKey-generator"
 
-export default async function Page() {
-
-  const session = await getSession();
-  console.log("SESSSSSIONNNN====>", session)
+export default function Page() {
 
   return (
     <SidebarProvider>
@@ -44,13 +43,20 @@ export default async function Page() {
           </div>
         </header>
         {/* TODO: ADD YOUR COMPONENTS HERE */}
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+        <div className="flex flex-1 flex-col gap-4 p-4 pt-0 bg-gray-900">
+          <div className="space-y-4 p-8 pt-6">
+            <MetricsGrid />
+            <div className="grid lg:grid-cols-2 gap-4 md:grid-cols-2">
+            <ConversionChart />
+            <ApiKeyGenerator />
+            </div>
+          </div>
+          {/* <div className="grid auto-rows-min gap-4 md:grid-cols-3">
             <div className="aspect-video rounded-xl bg-muted/50" />
             <div className="aspect-video rounded-xl bg-muted/50" />
             <div className="aspect-video rounded-xl bg-muted/50" />
           </div>
-          <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
+          <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" /> */}
         </div>
       </SidebarInset>
     </SidebarProvider>
