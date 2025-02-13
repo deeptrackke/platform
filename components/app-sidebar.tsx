@@ -19,6 +19,11 @@ const items = [
     icon: Home,
   },
   {
+    title: "Verifications",
+    url: "/kyc",
+    icon: Search,
+  },
+  {
     title: "Insights",
     url: "/insights",
     icon: Database,
@@ -28,11 +33,7 @@ const items = [
     url: "https://deeptrack.ai/docs",
     icon: Book,
   },
-  {
-    title: "Verifications",
-    url: "#",
-    icon: Search,
-  },
+ 
   {
     title: "Settings",
     url: "#",
