@@ -1,16 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import {
-  Database,
-  Home,
-  Search,
-  Settings,
-  User2,
-  Key,
-  LogOut,
-  Loader2,
-} from "lucide-react";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   Sidebar,
   SidebarContent,
@@ -21,20 +11,55 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { getInitials } from "@/utils/getInitials";
+import {
+  Database,
+  Home,
+  Key,
+  Loader2,
+  LogOut,
+  Search,
+  Settings,
+  User2,
+} from "lucide-react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { getInitials } from "@/utils/getInitials";
 
 const items = [
-  { title: "Home", url: "/dashboard", icon: Home },
-  { title: "Insights", url: "/coming-soon", icon: Database },
-  { title: "Verifications", url: "#", icon: Search },
-  { title: "API Keys", url: "/api-keys", icon: Key },
-  { title: "Settings", url: "/coming-soon", icon: Settings },
-  { title: "Organization", url: "/coming-soon", icon: User2 },
-];
+  {
+    title: "Home",
+    url: "/dashboard",
+    icon: Home,
+  },
+  {
+    title: "Verifications",
+    url: "/kyc",
+    icon: Search,
+  },
+  {
+    title: "Insights",
+    url: "/insights",
+    icon: Database,
+  },
+  {
+    title: "Docs",
+    url: "https://deeptrack.ai/docs",
+    icon: Book,
+  },
+ 
+  {
+    title: "Settings",
+    url: "#",
+    icon: Settings,
+  },
+  {
+    title: "Organization",
+    url: "#",
+    icon: User2,
+  },
+]
 
 export function AppSidebar() {
   const pathname = usePathname();
