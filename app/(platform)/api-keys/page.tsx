@@ -17,7 +17,7 @@ export default async function ApiKeysPage() {
     let apiKeys: ApiKey[] = []
     try {
         const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/users/${session.user.id}/apikeys`,
+            `${process.env.NEXT_PUBLIC_API_URL}/users/api-keys/${session.user.id}`,
             {
                 headers: { Authorization: `Bearer ${session.accessToken}` },
                 next: { tags: ['apikeys'] }
