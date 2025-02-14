@@ -1,0 +1,277 @@
+"use client"
+
+import { useState, useEffect } from "react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Copy, Trash2, Eye, EyeOff, Key, Plus, Loader2 } from "lucide-react"
+import axios from "axios"
+import { getSession } from "@/lib/session"
+import { formatDistanceToNow } from "date-fns"
+import toast, {Toaster} from "react-hot-toast"
+
+interface ApiKey {
+    id: string
+    name: string
+    prefix: string
+    createdAt: string
+    lastUsed?: string
+}
+
+export default function ApiKeysPage() {
+    const [apiKeys, setApiKeys] = useState<ApiKey[]>([])
+    const [newKey, setNewKey] = useState<string>("")
+    const [showKey, setShowKey] = useState(false)
+    const [keyName, setKeyName] = useState("")
+    const [loading, setLoading] = useState(false)
+    const [userId, setUserId] = useState<string | null>(null)
+    const [isDialogOpen, setIsDialogOpen] = useState(false)
+
+    useEffect(() => {
+        const initialize = async () => {
+            const session = await getSession()
+            setUserId(session?.user.id || null)
+            if (session) {
+                fetchApiKeys(session.accessToken)
+            }
+        }
+        initialize()
+    }, [userId]) // Added userId as dependency
+
+    const fetchApiKeys = async (token: string) => {
+        try {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users/${userId}/apikeys`, {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+            setApiKeys(response.data)
+        } catch (error) {
+            console.error("API Error:", error)
+            toast.error("Failed to fetch API keys")
+        }
+    }
+
+    const handleCreateKey = async () => {
+        if (!keyName.trim()) {
+            toast.error("Please enter a key name")
+            return
+        }
+
+        setLoading(true)
+        try {
+            const session = await getSession()
+            if (!session) return
+
+            const response = await axios.post(
+                `${process.env.NEXT_PUBLIC_API_URL}/users/${session.user.id}/create-apikey`,
+                { name: keyName },
+                { headers: { Authorization: `Bearer ${session.accessToken}` } }
+            )
+
+            setNewKey(response.data.apiKey)
+            setKeyName("")
+            fetchApiKeys(session.accessToken)
+            toast.success("API key created successfully")
+        } catch (error) {
+            console.error("API Error:", error)
+            toast.error("Failed to create API key")
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const confirmRevoke = async (keyId: string) => {
+        if (window.confirm("Are you sure you want to revoke this API key?")) {
+            try {
+                const session = await getSession()
+                if (!session) return
+
+                await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/apikeys/${keyId}`, {
+                    headers: { Authorization: `Bearer ${session.accessToken}` }
+                })
+
+                setApiKeys(prev => prev.filter(key => key.id !== keyId))
+                toast.success("API key revoked successfully")
+            } catch (error) {
+                console.error("API Error:", error)
+                toast.error("Failed to revoke API key")
+            }
+        }
+    }
+
+    const copyToClipboard = (text: string) => {
+        navigator.clipboard.writeText(text)
+        toast.success("Copied to clipboard")
+    }
+
+    const resetDialog = () => {
+        setNewKey("")
+        setShowKey(false)
+        setKeyName("")
+        setIsDialogOpen(false)
+    }
+
+    if (!userId) return <div className="flex justify-center p-8"><Loader2 className="h-6 w-6 animate-spin" /></div>
+
+    return (
+        <div className="container mx-auto px-4 py-8 max-w-4xl">
+            <Toaster />
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+                <h1 className="text-2xl font-bold">API Keys</h1>
+                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                    <DialogTrigger asChild>
+                        <Button className="w-full sm:w-auto">
+                            <Plus className="mr-2 h-4 w-4" />
+                            Create New Key
+                        </Button>
+                    </DialogTrigger>
+
+                    <DialogContent onInteractOutside={resetDialog}>
+                        <DialogHeader>
+                            <DialogTitle>Create New API Key</DialogTitle>
+                            <DialogDescription>
+                                API keys authenticate your requests to our API services.
+                            </DialogDescription>
+                        </DialogHeader>
+
+                        <div className="space-y-6">
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium leading-none">Key Name</label>
+                                <Input
+                                    placeholder="e.g. 'Production Server'"
+                                    value={keyName}
+                                    onChange={(e) => setKeyName(e.target.value)}
+                                    disabled={loading}
+                                />
+                                <p className="text-sm text-muted-foreground">Optional name for your reference</p>
+                            </div>
+
+                            {newKey && (
+                                <Card>
+                                    <CardHeader className="pb-2">
+                                        <div className="flex items-center space-x-2">
+                                            <Key className="h-5 w-5 text-primary" />
+                                            <CardTitle>Your New API Key</CardTitle>
+                                        </div>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className="flex items-center justify-between bg-muted/50 p-4 rounded-lg border">
+                                            <code className="text-sm font-mono break-all">
+                                                {showKey ? newKey : `${newKey.slice(0, 8)}*****${newKey.slice(-4)}`}
+                                            </code>
+                                            <div className="flex gap-2 ml-4">
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={() => setShowKey(!showKey)}
+                                                    className="h-8 w-8 p-0"
+                                                >
+                                                    {showKey ? (
+                                                        <EyeOff className="h-4 w-4" />
+                                                    ) : (
+                                                        <Eye className="h-4 w-4" />
+                                                    )}
+                                                </Button>
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={() => copyToClipboard(newKey)}
+                                                    className="h-8 w-8 p-0"
+                                                >
+                                                    <Copy className="h-4 w-4" />
+                                                </Button>
+                                            </div>
+                                        </div>
+                                        <p className="text-sm text-destructive mt-3">
+                                            ⚠️ This key will only be shown once. Store it securely!
+                                        </p>
+                                    </CardContent>
+                                </Card>
+                            )}
+                        </div>
+
+                        <DialogFooter>
+                            <div className="flex gap-2 w-full">
+                                <Button
+                                    onClick={handleCreateKey}
+                                    disabled={loading || !!newKey}
+                                    className="flex-1"
+                                >
+                                    {loading ? (
+                                        <Loader2 className="h-4 w-4 animate-spin" />
+                                    ) : (
+                                        "Create Key"
+                                    )}
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    onClick={resetDialog}
+                                    className="flex-1"
+                                >
+                                    {newKey ? "Close" : "Cancel"}
+                                </Button>
+                            </div>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+            </div>
+
+            <div className="rounded-lg border">
+                <Table>
+                    <TableHeader className="bg-muted/50">
+                        <TableRow>
+                            <TableHead className="w-[25%]">Name</TableHead>
+                            <TableHead className="w-[20%]">Key</TableHead>
+                            <TableHead className="w-[25%]">Created</TableHead>
+                            <TableHead className="w-[25%]">Last Used</TableHead>
+                            <TableHead className="w-[5%] text-right">Actions</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {apiKeys.map((key) => (
+                            <TableRow key={key.id} className="hover:bg-muted/10">
+                                <TableCell className="font-medium">
+                                    {key.name || <span className="text-muted-foreground">Unnamed</span>}
+                                </TableCell>
+                                <TableCell>
+                                    <Badge variant="secondary" className="font-mono py-1">
+                                        {key.prefix}•••••
+                                    </Badge>
+                                </TableCell>
+                                <TableCell>
+                                    {formatDistanceToNow(new Date(key.createdAt), { addSuffix: true })}
+                                </TableCell>
+                                <TableCell>
+                                    {key.lastUsed ? (
+                                        formatDistanceToNow(new Date(key.lastUsed), { addSuffix: true })
+                                    ) : (
+                                        <span className="text-muted-foreground">Never</span>
+                                    )}
+                                </TableCell>
+                                <TableCell className="text-right">
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => confirmRevoke(key.id)}
+                                        className="h-8 w-8 text-destructive hover:bg-destructive/10"
+                                    >
+                                        <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                        {apiKeys.length === 0 && (
+                            <TableRow>
+                                <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
+                                    No API keys found. Create one to get started.
+                                </TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
+            </div>
+        </div>
+    )
+}

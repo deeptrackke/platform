@@ -11,6 +11,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import Image from "next/image"
+import { Key } from "lucide-react"
 
 const items = [
   {
@@ -32,6 +33,11 @@ const items = [
     title: "Verifications",
     url: "#",
     icon: Search,
+  },
+  {
+    title: "API Keys",
+    url: "/api-keys",
+    icon: Key,
   },
   {
     title: "Settings",
