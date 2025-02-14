@@ -23,6 +23,7 @@
     "axios": "^1.7.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
     "formik": "^2.4.6",
     "framer-motion": "^11.18.1",
     "import": "^0.0.6",
@@ -36,10 +37,13 @@
     "recharts": "^2.15.1",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
+    "@tanstack/match-sorter-utils": "^8.19.4",
+    "@tanstack/react-table": "^8.20.5",
     "yup": "^1.6.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@types/date-fns": "^2.6.3",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
