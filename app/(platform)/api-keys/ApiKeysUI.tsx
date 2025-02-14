@@ -20,6 +20,9 @@ export default function ApiKeysUI({ initialApiKeys }: { initialApiKeys: ApiKey[]
     const [keyName, setKeyName] = useState("")
     const [loading, setLoading] = useState(false)
     const [isDialogOpen, setIsDialogOpen] = useState(false)
+    const [confirmDialogOpen, setConfirmDialogOpen] = useState(false)
+    const [keyToRevoke, setKeyToRevoke] = useState<string | null>(null)
+
 
     const handleCreateKey = async () => {
         if (!keyName.trim()) {
@@ -40,9 +43,9 @@ export default function ApiKeysUI({ initialApiKeys }: { initialApiKeys: ApiKey[]
         setLoading(false)
     }
 
-    const confirmRevoke = async (keyId: string) => {
-        if (window.confirm("Are you sure you want to revoke this API key?")) {
-            const result = await revokeApiKey(keyId)
+    const confirmRevoke = async () => {
+        if (keyToRevoke) {
+            const result = await revokeApiKey(keyToRevoke)
             if (result.success) {
                 const updatedKeys = await getApiKeys()
                 setApiKeys(updatedKeys)
@@ -50,6 +53,8 @@ export default function ApiKeysUI({ initialApiKeys }: { initialApiKeys: ApiKey[]
             } else {
                 toast.error(result.error || "Failed to revoke API key")
             }
+            setConfirmDialogOpen(false)
+            setKeyToRevoke(null)
         }
     }
 
@@ -168,6 +173,25 @@ export default function ApiKeysUI({ initialApiKeys }: { initialApiKeys: ApiKey[]
                 </Dialog>
             </div>
 
+            <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Confirm API Key Revocation</DialogTitle>
+                        <DialogDescription>
+                            Are you sure you want to revoke this API key? This action cannot be undone.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button variant="destructive" onClick={confirmRevoke}>
+                            Revoke Key
+                        </Button>
+                        <Button variant="outline" onClick={() => setConfirmDialogOpen(false)}>
+                            Cancel
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
             <div className="rounded-lg border">
                 <Table>
                     <TableHeader className="bg-muted/50">
@@ -204,7 +228,10 @@ export default function ApiKeysUI({ initialApiKeys }: { initialApiKeys: ApiKey[]
                                     <Button
                                         variant="ghost"
                                         size="icon"
-                                        onClick={() => confirmRevoke(key.id)}
+                                        onClick={() => {
+                                            setKeyToRevoke(key.id)
+                                            setConfirmDialogOpen(true)
+                                        }}
                                         className="h-8 w-8 text-destructive hover:bg-destructive/10"
                                     >
                                         <Trash2 className="h-4 w-4" />
