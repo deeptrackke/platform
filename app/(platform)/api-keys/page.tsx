@@ -3,11 +3,14 @@ import { redirect } from "next/navigation"
 import ApiKeysUI from "./ApiKeysUI"
 
 export interface ApiKey {
-    id: string
-    name: string
-    prefix: string
+    id: number
+    keyPrefix: string
+    status: string
     createdAt: string
-    lastUsed?: string
+    updatedAt: string
+    // These fields are present in response but not used in UI:
+    hashedKey?: string
+    ownerid?: number
 }
 
 export default async function ApiKeysPage() {

@@ -193,61 +193,52 @@ export default function ApiKeysUI({ initialApiKeys }: { initialApiKeys: ApiKey[]
             </Dialog>
 
             <div className="rounded-lg border">
-                <Table>
-                    <TableHeader className="bg-muted/50">
-                        <TableRow>
-                            <TableHead className="w-[25%]">Name</TableHead>
-                            <TableHead className="w-[20%]">Key</TableHead>
-                            <TableHead className="w-[25%]">Created</TableHead>
-                            <TableHead className="w-[25%]">Last Used</TableHead>
-                            <TableHead className="w-[5%] text-right">Actions</TableHead>
+            <Table>
+                <TableHeader className="bg-muted/50">
+                    <TableRow>
+                        <TableHead className="w-[20%]">Key</TableHead>
+                        <TableHead className="w-[15%]">Status</TableHead>
+                        <TableHead className="w-[25%]">Created</TableHead>
+                        <TableHead className="w-[25%]">Last Updated</TableHead>
+                        <TableHead className="w-[15%] text-right">Actions</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {apiKeys.map((key) => (
+                        <TableRow key={key.id} className="hover:bg-muted/10">
+                            <TableCell>
+                                <Badge variant="secondary" className="font-mono py-1">
+                                    {key.keyPrefix}•••••
+                                </Badge>
+                            </TableCell>
+                            <TableCell>
+                                <Badge variant={key.status === 'Active' ? 'success' : 'destructive'}>
+                                    {key.status}
+                                </Badge>
+                            </TableCell>
+                            <TableCell>
+                                {formatDistanceToNow(new Date(key.createdAt), { addSuffix: true })}
+                            </TableCell>
+                            <TableCell>
+                                {formatDistanceToNow(new Date(key.updatedAt), { addSuffix: true })}
+                            </TableCell>
+                            <TableCell className="text-right">
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => {
+                                        setKeyToRevoke(key.id.toString())
+                                        setConfirmDialogOpen(true)
+                                    }}
+                                    className="h-8 w-8 text-destructive hover:bg-destructive/10"
+                                >
+                                    <Trash2 className="h-4 w-4" />
+                                </Button>
+                            </TableCell>
                         </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {apiKeys.map((key) => (
-                            <TableRow key={key.id} className="hover:bg-muted/10">
-                                <TableCell className="font-medium">
-                                    {key.name || <span className="text-muted-foreground">Unnamed</span>}
-                                </TableCell>
-                                <TableCell>
-                                    <Badge variant="secondary" className="font-mono py-1">
-                                        {key.prefix}•••••
-                                    </Badge>
-                                </TableCell>
-                                <TableCell>
-                                    {formatDistanceToNow(new Date(key.createdAt), { addSuffix: true })}
-                                </TableCell>
-                                <TableCell>
-                                    {key.lastUsed ? (
-                                        formatDistanceToNow(new Date(key.lastUsed), { addSuffix: true })
-                                    ) : (
-                                        <span className="text-muted-foreground">Never</span>
-                                    )}
-                                </TableCell>
-                                <TableCell className="text-right">
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={() => {
-                                            setKeyToRevoke(key.id)
-                                            setConfirmDialogOpen(true)
-                                        }}
-                                        className="h-8 w-8 text-destructive hover:bg-destructive/10"
-                                    >
-                                        <Trash2 className="h-4 w-4" />
-                                    </Button>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                        {apiKeys.length === 0 && (
-                            <TableRow>
-                                <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
-                                    No API keys found. Create one to get started.
-                                </TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
+                    ))}
+                </TableBody>
+            </Table>
             </div>
         </div>
     )
