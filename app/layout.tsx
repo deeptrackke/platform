@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "@/components/ui/sonner";
 
 const outfit = Outfit({
-  variable: "--font-outfit",
-  subsets: ["latin"],
+	variable: "--font-outfit",
+	subsets: ["latin"],
+	weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
 
 export const metadata: Metadata = {
@@ -25,10 +27,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${outfit.variable} antialiased`}>
-        {children}
-      </body>
-    </html>
-  );
+			<html lang="en">
+				<body className={`${outfit.variable} antialiased`}>
+					{children}
+					<Toaster closeButton richColors position="top-center" />
+				</body>
+			</html>
+		);
 }
