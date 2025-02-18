@@ -10,6 +10,7 @@ export default function ComingSoonPage() {
                     alt="Logo"
                     fill
                     className="object-contain"
+                    priority
                 />
                 </div>
                 <h1 className="text-5xl font-bold mb-4 text-purple-400">Coming Soon</h1>
