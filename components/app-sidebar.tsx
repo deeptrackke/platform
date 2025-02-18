@@ -117,12 +117,11 @@ export function AppSidebar() {
                       <a
                         href={item.url}
                         target={item.external ? "_blank" : "_self"}
-                        className={`flex items-center gap-2 px-4 py-4 rounded-xl hover:bg-gray-700 hover:text-white transition-colors ${pathname === item.url ? "bg-black" : ""
+                        className={`flex items-center gap-2 px-4 py-4 rounded-xl hover:bg-gray-600 transition-colors ${pathname === item.url ? "bg-black" : ""
                           }`}
                       >
                         <div
-                          className={`p-2 rounded-xl ${pathname === item.url ? "bg-gray-700" : "bg-black"
-                            }`}
+                          className="p-2 rounded-xl"
                         >
                           <item.icon
                             className={`w-5 h-5 ${pathname === item.url ? "text-gray-300" : ""
