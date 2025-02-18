@@ -29,11 +29,11 @@ import { getInitials } from "@/utils/getInitials";
 
 const items = [
   { title: "Home", url: "/dashboard", icon: Home },
-  { title: "Insights", url: "/insights", icon: Database },
+  { title: "Insights", url: "/coming-soon", icon: Database },
   { title: "Verifications", url: "#", icon: Search },
   { title: "API Keys", url: "/api-keys", icon: Key },
-  { title: "Settings", url: "#", icon: Settings },
-  { title: "Organization", url: "#", icon: User2 },
+  { title: "Settings", url: "/coming-soon", icon: Settings },
+  { title: "Organization", url: "/coming-soon", icon: User2 },
 ];
 
 export function AppSidebar() {
