@@ -25,7 +25,7 @@ import {
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { getInitials } from "@/utils/getInitials";
 import { Skeleton } from "./ui/skeleton";
 
@@ -170,7 +170,6 @@ export function AppSidebar() {
             onClick={() => setDropdownOpen(!dropdownOpen)}
           >
             <Avatar className="size-10 hover:opacity-75 transition">
-              <AvatarImage alt="Avatar Image" src="/avatar.png" />
               <AvatarFallback className="bg-sky-600 text-white">
                 {user?.name ? getInitials(user.name) : "DT"}
               </AvatarFallback>
