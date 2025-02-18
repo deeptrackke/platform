@@ -27,14 +27,13 @@ import { usePathname } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { getInitials } from "@/utils/getInitials";
-import { Skeleton } from "./ui/skeleton";
 
 const items = [
   { title: "Home", url: "/dashboard", icon: Home },
   { title: "Insights", url: "/insights", icon: Database },
   {
     title: "Docs",
-    url: "https://deeptrack.ai/docs",
+    url: "https://docs.deeptrack.io",
     icon: Book,
     external: true,
   },
@@ -49,9 +48,11 @@ export function AppSidebar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [user, setUser] = useState<{name: string} | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
 
   // Fetch the session info on mount.
   useEffect(() => {
+    setIsMounted(true);
     const fetchUser = async () => {
       try {
         const response = await fetch('api/auth/current-user')
@@ -100,14 +101,16 @@ export function AppSidebar() {
       <Sidebar className="bg-gray-800 text-white min-h-screen flex flex-col justify-between">
         <SidebarContent>
           <SidebarGroup>
-            <SidebarHeader className="border-b border-gray-700">
+            <SidebarHeader className="border-b border-gray-700 mb-2">
               <Image
                 src="/deeptrack-logo.png"
                 alt="DeepTrack logo"
                 width={120}
                 height={120}
                 className="mt-2 p-2"
+                priority
               />
+
             </SidebarHeader>
             <SidebarGroupContent>
               <SidebarMenu>
@@ -153,7 +156,7 @@ export function AppSidebar() {
             Please check our docs
           </p>
           <a
-            href="https://deeptrack.ai/docs"
+            href="https://docs.deeptrack.io"
             target="_blank"
             rel="noopener noreferrer"
             className="block mt-2 text-center text-sm text-black bg-white hover:bg-gray-500 rounded-lg px-4 py-1 transition-colors"
@@ -170,10 +173,10 @@ export function AppSidebar() {
           >
             <Avatar className="size-10 hover:opacity-75 transition">
               <AvatarFallback className="bg-sky-600 text-white">
-                {user?.name ? getInitials(user.name) : "DT"}
+                {user?.name ? getInitials(user.name) : (isMounted ? "DT" : <Loader2 />)}
               </AvatarFallback>
             </Avatar>
-            <span className="text-sm">{user?.name || <Skeleton />}</span>
+            <span className="text-sm">{user?.name || <Loader2 />}</span>
           </div>
 
           {/* Dropdown Menu */}
