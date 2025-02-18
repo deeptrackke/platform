@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import {
-  Book,
   Database,
   Home,
   Search,
@@ -31,12 +30,6 @@ import { getInitials } from "@/utils/getInitials";
 const items = [
   { title: "Home", url: "/dashboard", icon: Home },
   { title: "Insights", url: "/insights", icon: Database },
-  {
-    title: "Docs",
-    url: "https://docs.deeptrack.io",
-    icon: Book,
-    external: true,
-  },
   { title: "Verifications", url: "#", icon: Search },
   { title: "API Keys", url: "/api-keys", icon: Key },
   { title: "Settings", url: "#", icon: Settings },
@@ -119,7 +112,6 @@ export function AppSidebar() {
                     <SidebarMenuButton asChild>
                       <a
                         href={item.url}
-                        target={item.external ? "_blank" : "_self"}
                         className={`flex items-center gap-2 px-4 py-4 rounded-xl hover:bg-gray-600 transition-colors ${pathname === item.url ? "bg-black" : ""
                           }`}
                       >
