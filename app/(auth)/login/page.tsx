@@ -1,20 +1,17 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Eye, EyeOff, Lock, Mail } from "lucide-react"
-import Image from "next/image"
-import Link from "next/link"
-import { Badge } from "@/components/ui/badge"
-import { useRouter } from "next/navigation"
-import toast, {Toaster} from "react-hot-toast"
-import { useFormik } from "formik"
-import * as Yup from "yup"
-import axios from "axios"
-import { Circles } from "react-loader-spinner"
-import { createSession } from "@/lib/session"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import toast, { Toaster } from "react-hot-toast";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Mail, Lock, Eye, EyeOff } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { Circles } from "react-loader-spinner";
 
 interface FormValues {
   email: string;
@@ -23,63 +20,54 @@ interface FormValues {
 }
 
 export default function Login() {
-  const [showPassword, setShowPassword] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const router = useRouter()
-
-  // formik setup
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const formik = useFormik<FormValues>({
     initialValues: {
       email: "",
       password: "",
-      terms: false
+      terms: false,
     },
     validationSchema: Yup.object({
       email: Yup.string()
         .email("Invalid email address")
         .required("Email is required"),
-        password: Yup.string()
+      password: Yup.string()
         .min(6, "Password must be at least 6 characters")
         .required("Password is required"),
-      terms: Yup.boolean().oneOf([true], "You must accept the terms and conditions"),
+      terms: Yup.boolean().oneOf(
+        [true],
+        "You must accept the terms and conditions"
+      ),
     }),
     onSubmit: async (values) => {
-      setLoading(true)
+      setLoading(true);
       try {
-        // send login request to the server
-        const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, values)
+        const res = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(values),
+        });
+        const data = await res.json();
 
-        // check if login was successful
-        if (response.data.accessToken && response.data.refreshToken) {
-          // Create server session
-          await createSession({
-            user: response.data.user, // Ensure your API returns user data
-            accessToken: response.data.accessToken,
-            refreshToken: response.data.refreshToken
-          });
-
-          // Store tokens in localStorage for client-side usage (if needed)
-          localStorage.setItem("access_token", response.data.accessToken);
-          localStorage.setItem("refresh_token", response.data.refreshToken);
-
+        if (res.ok && data.success) {
+          toast.success("Successfully logged in.");
           router.push("/dashboard");
-          router.refresh(); 
+          router.refresh();
         } else {
-            toast.error("Login failed. Please check your credentials.")
+          toast.error(data.error || "Login failed. Please try again.");
         }
-        
-      } catch(error: unknown) {
-        if (axios.isAxiosError(error)) {
-            toast.error(error.response?.data.message || "An error occurred. Please try again.")
-        } else {
-            toast.error("An error occurred. Please try again.")
-        }
+      } catch {
+        toast.error("An error occurred. Please try again.");
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
-  })
+    },
+  });
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-4">
@@ -94,14 +82,16 @@ export default function Login() {
             height={50}
             className="h-10 w-auto"
           />
-          <Badge className="text-xs px-2 py-1 ml-2 border border-customTeal bg-transparent rounded-[8px]">
+          <div className="text-xs px-2 py-1 ml-2 border border-customTeal bg-transparent rounded-[8px]">
             Platform
-          </Badge>
+          </div>
         </div>
 
         {/* Description */}
         <div className="space-y-4 text-center mb-8">
-          <p className="text-gray-200">Only log in with organization email or ID.</p>
+          <p className="text-gray-200">
+            Only log in with organization email or ID.
+          </p>
         </div>
 
         {/* Form */}
@@ -118,7 +108,9 @@ export default function Login() {
               onBlur={formik.handleBlur}
             />
             {formik.touched.email && formik.errors.email && (
-              <div className="text-red-500 text-xs mt-1">{formik.errors.email}</div>
+              <div className="text-red-500 text-xs mt-1">
+                {formik.errors.email}
+              </div>
             )}
           </div>
 
@@ -138,11 +130,17 @@ export default function Login() {
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-2.5 text-gray-400"
             >
-              {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+              {showPassword ? (
+                <EyeOff className="h-5 w-5" />
+              ) : (
+                <Eye className="h-5 w-5" />
+              )}
             </button>
-            {formik.touched.password && formik.errors.password ? (
-              <div className="text-red-500 text-xs mt-1">{formik.errors.password}</div>
-            ) : null}
+            {formik.touched.password && formik.errors.password && (
+              <div className="text-red-500 text-xs mt-1">
+                {formik.errors.password}
+              </div>
+            )}
           </div>
 
           <div className="flex items-center space-x-2">
@@ -150,12 +148,14 @@ export default function Login() {
               id="terms"
               className="border-gray-600 data-[state=checked]:bg-white data-[state=checked]:text-black"
               name="terms"
-              onCheckedChange={(checked) => formik.setFieldValue("terms", checked)}
+              onCheckedChange={(checked) =>
+                formik.setFieldValue("terms", checked)
+              }
               onBlur={formik.handleBlur}
               checked={formik.values.terms}
             />
             <label htmlFor="terms" className="text-sm text-gray-300">
-              I confirm that i have read, sent and agreed to Deeptrack&apos;s{" "}
+              I confirm that I have read, sent, and agreed to Deeptrack&apos;s{" "}
               <Link href="#" className="text-customTeal hover:underline">
                 Terms of Use
               </Link>{" "}
@@ -165,17 +165,23 @@ export default function Login() {
               </Link>
               .
             </label>
-            {formik.touched.terms && formik.errors.terms ? (
-              <div className="text-red-500 text-sm">{formik.errors.terms}</div>
-            ) : null}
+            {formik.touched.terms && formik.errors.terms && (
+              <div className="text-red-500 text-sm">
+                {formik.errors.terms}
+              </div>
+            )}
           </div>
 
           <Button className="w-full bg-white text-black hover:bg-gray-200">
-            {loading ? <Circles height={24} width={24} color="#000" /> : "Login"}
+            {loading ? (
+              <Circles height={24} width={24} color="#000" />
+            ) : (
+              "Login"
+            )}
           </Button>
         </form>
 
-        {/* Social Login Option - Now outside the form */}
+        {/* Social Login Option */}
         <div className="space-y-6">
           <div className="flex justify-center text-sm mt-2">
             <p className="mr-1">Don&apos;t have an account?</p>
@@ -186,7 +192,10 @@ export default function Login() {
 
           <div className="text-center text-gray-400">or</div>
 
-          <Button variant="outline" className="w-full border-customTeal text-white bg-transparent hover:bg-gray-800 hover:text-white">
+          <Button
+            variant="outline"
+            className="w-full border-customTeal text-white bg-transparent hover:bg-gray-800 hover:text-white"
+          >
             <Image
               src="/google.png"
               alt="Google logo"
@@ -206,37 +215,5 @@ export default function Login() {
         </Link>
       </div>
     </div>
-  )
-};
-
-// implement refreshToken
-export const refreshToken = async (oldRefreshToken: string): Promise<string | null> => {
-  try {
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/auth/refresh-token`,
-      { refresh: oldRefreshToken },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    const { accessToken, refreshToken } = response.data;
-
-    // Update local storage with new tokens
-    localStorage.setItem("access_token", accessToken);
-    localStorage.setItem("refresh_token", refreshToken);
-
-    // Optionally, send updated tokens to the backend session manager
-    await axios.post(`${process.env.NEXT_PUBLIC_URL}/auth/update-token`, {
-      accessToken,
-      refreshToken,
-    });
-
-    return accessToken;
-  } catch (error) {
-    console.error("Token refresh failed:", error);
-    return null;
-  }
-};
+  );
+}
