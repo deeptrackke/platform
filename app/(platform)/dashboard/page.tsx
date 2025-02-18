@@ -1,7 +1,5 @@
 import { MetricsGrid } from "../_components/metrics-grid"
-import { ConversionChart } from "../_components/conversion-chart"
 import GettingStarted from "../_components/gettingStarted"
-// import ApiKeyGenerator from "../_components/apiKey-generator"
 
 export default function Page() {
   return (
@@ -12,10 +10,6 @@ export default function Page() {
         </div>
         <div className="space-y-4 p-8 pt-6">
           <MetricsGrid />
-          <div className="grid lg:grid-cols-2 gap-4 md:grid-cols-2">
-            <ConversionChart />
-            {/* <ApiKeyGenerator /> */}
-          </div>
         </div>
       </main>
     </div>
