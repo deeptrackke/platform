@@ -1,4 +1,3 @@
-import { refreshToken } from "@/app/(auth)/login/page";
 import { getSession } from "./session";
 
 export interface FetchOptions extends RequestInit {
@@ -33,3 +32,20 @@ export const authFetch = async (
   }
   return response;
 };
+
+async function refreshToken(refreshToken: string): Promise<string | null> {
+  const response = await fetch('/auth/refresh-token', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ refreshToken }),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to refresh token');
+  }
+
+  const data = await response.json();
+  return data.accessToken || null;
+}
