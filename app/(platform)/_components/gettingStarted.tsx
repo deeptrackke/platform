@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 
 export default function GettingStarted() {
     return (
-        <div className="bg-black rounded-xl text-white p-8 lg:p-4">
+        <div className="bg-black rounded-xl text-white p-8 lg:p-4 min-h-[200px]">
             <div className="grid gap-8 lg:grid-cols-2 lg:gap-16 items-center">
                 <div className="space-y-4">
                     <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">Get started</h2>
@@ -16,21 +16,25 @@ export default function GettingStarted() {
                     </Button>
                 </div>
 
-                <div className="relative flex justify-end">
-                    <Image
-                        src="/banner-img.png"
-                        alt="Person with laptop"
-                        width={250}
-                        height={300}
-                        className="relative z-10"
-                    />
-                    <Image
-                        src="/banner-img-01.png"
-                        alt="decorations"
-                        width={100}
-                        height={100}
-                        className="absolute top-1/2 right-0 transform -translate-y-1/2 opacity-50"
-                    />
+                <div className="relative flex justify-end items-center">
+                    <div className="relative w-[150px] h-[150px]">
+                        <Image
+                            src="/banner-img.png"
+                            alt="Person with laptop"
+                            fill
+                            className="object-contain drop-shadow-lg z-10"
+                            priority
+                        />
+                    </div>
+                    <div className="absolute w-[80px] h-[80px] -right-4 top-1/2 transform -translate-y-1/2">
+                        <Image
+                            src="/banner-img-01.png"
+                            alt="decorations"
+                            fill
+                            className="object-contain opacity-40 animate-pulse"
+                            priority
+                        />
+                    </div>
                 </div>
             </div>
         </div>
