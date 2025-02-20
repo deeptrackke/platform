@@ -1,5 +1,6 @@
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 export default function GettingStarted() {
     return (
@@ -11,9 +12,11 @@ export default function GettingStarted() {
                         Ensure the validity of individuals&apos; documents, tax status, images, and online reputation to maintain
                         proper compliance.
                     </p>
-                    <Button className="bg-white text-black px-4 py-2 rounded-md font-semibold">
+                    <Link href={'/verify-id'}>
+                    <Button className="bg-white hover:bg-customTeal text-black px-4 py-2 rounded-md font-semibold">
                         VERIFY IDENTITY
                     </Button>
+                    </Link>
                 </div>
 
                 <div className="relative flex justify-end items-center">
