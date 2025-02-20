@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
-import { Outfit } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { ClerkProvider } from "@clerk/nextjs";
 
-const outfit = Outfit({
-  variable: "--font-outfit",
-  subsets: ["latin"],
-  display: 'swap',
+const outfit = localFont({
+	src: "../fonts/Outfit.ttf",
+	variable: "--font-outfit",
+	display: "swap",
+	fallback: ["system-ui", "sans-serif"],
 });
 
 export const metadata: Metadata = {
