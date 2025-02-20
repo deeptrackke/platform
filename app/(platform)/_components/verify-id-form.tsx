@@ -81,21 +81,21 @@ const VerifyIdentityForm = () => {
       <p className="text-gray-500 mb-6">Choose a valid government-issued document</p>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div
-          className={`relative p-6 border rounded-lg transition-all duration-300 hover:border-customTeal hover:shadow-md cursor-pointer ${selectedDocument === "id-card" ? "selected" : ""}`}
+          className={`relative p-6 border rounded-lg transition-all duration-300 hover:border-customTeal hover:shadow-md cursor-pointer ${selectedDocument === "id-card" ? "border-customTeal shadow-md" : ""}`}
           onClick={() => handleDocumentSelect("id-card")}
         >
           <CreditCard className="w-6 h-6 text-customTeal mb-2" />
           <h3 className="font-medium">Government-Issued ID Card</h3>
         </div>
         <div
-          className={`relative p-6 border rounded-lg transition-all duration-300 hover:border-customTeal hover:shadow-md cursor-pointer ${selectedDocument === "drivers-license" ? "selected" : ""}`}
+          className={`relative p-6 border rounded-lg transition-all duration-300 hover:border-customTeal hover:shadow-md cursor-pointer ${selectedDocument === "drivers-license" ? "border-customTeal shadow-md" : ""}`}
           onClick={() => handleDocumentSelect("drivers-license")}
         >
           <FileText className="w-6 h-6 text-customTeal mb-2" />
           <h3 className="font-medium">Driver's License</h3>
         </div>
         <div
-          className={`relative p-6 border rounded-lg transition-all duration-300 hover:border-customTeal hover:shadow-md cursor-pointer ${selectedDocument === "passport" ? "selected" : ""}`}
+          className={`relative p-6 border rounded-lg transition-all duration-300 hover:border-customTeal hover:shadow-md cursor-pointer ${selectedDocument === "passport" ? "border-customTeal shadow-md" : ""}`}
           onClick={() => handleDocumentSelect("passport")}
         >
           <FileText className="w-6 h-6 text-customTeal mb-2" />
@@ -123,7 +123,7 @@ const VerifyIdentityForm = () => {
           <p className="text-sm text-gray-500 mt-1">JPG, PNG, WebP </p>
           <FileUpload endpoint="imageUploader" onChange={(res) => {res[0].url, res[0].key} } />
         </div>
-        <div className="upload-area flex flex-col overflow-hidden items-center justify-center text-center">
+        <div className="upload-area flex flex-col overflow-hidden p-4 items-center justify-center text-center">
           <Upload className="w-8 h-8 text-customTeal mb-2" />
           <p className="font-medium">Back Side</p>
           <p className="text-sm text-gray-500 mt-1">JPG, PNG, WebP </p>
@@ -165,7 +165,7 @@ const VerifyIdentityForm = () => {
           </div>
           <div className="mt-8 flex flex-col space-y-4">
             <Button
-              className="w-full hover:bg-customTeal "
+              className={`w-full ${!(currentStep === 0 && !selectedDocument) ? "bg-customTeal hover:bg-customTeal/90" : ""}`}
               onClick={handleNext}
               disabled={currentStep === 0 && !selectedDocument}
             >

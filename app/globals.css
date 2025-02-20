@@ -1,9 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 
+html,
+body,
+:root {
+  height: 100%;
+  font-family: 'Outfit', sans-serif;
+}
 
 @layer base {
   :root {
@@ -75,10 +82,6 @@
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  body {
-    font-family: 'Outfit', sans-serif;
   }
 }
 
