@@ -1,23 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getSession } from "./lib/session";
+import { clerkMiddleware } from "@clerk/nextjs/server";
 
-export default async function middleware(req: NextRequest) {
-  const session = await getSession();
-  const path = req.nextUrl.pathname;
-
-  // Redirect to login if no session for protected routes
-  if (path.startsWith("/dashboard") && !session?.user) {
-    return NextResponse.redirect(new URL("/login", req.nextUrl));
-  }
-
-  // Redirect to dashboard if logged in and trying to access auth pages
-  if (["/login", "/signup"].includes(path) && session?.user) {
-    return NextResponse.redirect(new URL("/dashboard", req.nextUrl));
-  }
-
-  return NextResponse.next();
-}
+export default clerkMiddleware();
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/login", "/signup"]
+	matcher: [
+		// Skip Next.js internals and all static files, unless found in search params
+		"/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+		// Always run for API routes
+		"/(api|trpc)(.*)",
+	],
 };
