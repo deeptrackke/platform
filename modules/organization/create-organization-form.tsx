@@ -55,6 +55,11 @@ export default function CreateOrganizationDialog() {
 	const [open, setOpen] = useState(false);
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
+		defaultValues: {
+			organizationName: "",
+			organizationEmail: "",
+			organizationPhone: "",
+		},
 	});
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -164,7 +169,7 @@ export default function CreateOrganizationDialog() {
 									>
 										<FormControl>
 											<SelectTrigger>
-												<SelectValue placeholder="Finance" />
+												<SelectValue placeholder="Choose organization domain" />
 											</SelectTrigger>
 										</FormControl>
 										<SelectContent>

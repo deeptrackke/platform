@@ -32,7 +32,7 @@ export default function RootLayout({
 			<ClerkProvider>
 				<html lang="en">
 					<body className={`${outfit.variable} antialiased`}>
-						<Toaster richColors closeButton />
+						<Toaster position="top-right" richColors closeButton />
 						{children}
 					</body>
 				</html>
