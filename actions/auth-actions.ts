@@ -23,11 +23,11 @@ type ResponseBody = {
 	message: string;
 };
 
-export async function addNewUser(role: string) {
+export async function addNewUser(role: string, companyId?: string) {
 	const clerkUser = await currentUser();
 	if (!clerkUser) return redirect("/sign-in");
 
-	const { id, emailAddresses } = clerkUser;
+	const { id, emailAddresses, fullName } = clerkUser;
 
 	try {
 		const response = await fetch(
@@ -41,6 +41,8 @@ export async function addNewUser(role: string) {
 					userId: id,
 					email: emailAddresses[0].emailAddress,
 					role,
+					fullName,
+					companyId,
 				}),
 			},
 		);

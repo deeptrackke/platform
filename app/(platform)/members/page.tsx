@@ -17,9 +17,11 @@ export default async function MembersPage() {
 					<CreateOrganizationDialog />
 				</div>
 			)}
-			<div className="flex items-center justify-end">
-				<InviteStaffDialog />
-			</div>
+			{company.data && (
+				<div className="flex items-center justify-end">
+					<InviteStaffDialog companyId={company.data.id} />
+				</div>
+			)}
 		</div>
 	);
 }

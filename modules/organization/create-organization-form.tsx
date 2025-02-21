@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { VscAdd } from "react-icons/vsc";
@@ -53,6 +54,7 @@ const formSchema = z.object({
 
 export default function CreateOrganizationDialog() {
 	const [open, setOpen] = useState(false);
+	const router = useRouter();
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -75,6 +77,7 @@ export default function CreateOrganizationDialog() {
 				toast.success(response.message);
 				setOpen(false);
 				form.reset();
+				router.refresh();
 			} else {
 				toast.error(response.message || "An error occurred");
 			}

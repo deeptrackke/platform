@@ -11,10 +11,11 @@ export default async function NewUser() {
 
 	const user = await findUserById(clerkUser.id);
 
-
-
 	if (!user) {
-		await addNewUser(clerkUser.publicMetadata.role as "user" | "admin");
+		await addNewUser(
+			clerkUser.publicMetadata.role as "user" | "admin",
+			clerkUser.publicMetadata.companyId,
+		);
 		redirect("/dashboard");
 	} else {
 		redirect("/dashboard");
